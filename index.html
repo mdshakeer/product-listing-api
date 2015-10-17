@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test api ajax</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.js"></script>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha256-Sk3nkD6mLTMOF0EOpNtsIry+s1CsaqQC1rVLTAy+0yc= sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<script type="text/javascript" src="script.js"></script>
+</head>
+<body onload="loadProduct(1)">
+	<div class="container">
+	    <div class="well">
+	        <div class="btn-group hidden">
+	            <a href="#" id="list" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-th-list">
+	            </span>List</a> <a href="#" id="grid" class="btn btn-default btn-sm"><span
+	                class="glyphicon glyphicon-th"></span>Grid</a>
+	        </div>
+	        <div class="row">
+				<div class="form-group checkboxGroup">
+					<strong class="col-md-1">Category:</strong>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes-0">
+					  <input type="checkbox" name="checkboxes" id="checkboxes-0" value="all" checked>
+					  All
+					</label>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes-1">
+					  <input type="checkbox" name="checkboxes" id="checkboxes-1" value="jeans">
+					  Jeans
+					</label>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes-2">
+					  <input type="checkbox" name="checkboxes" id="checkboxes-2" value="sarees">
+					  Sarees
+					</label>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes-3">
+					  <input type="checkbox" name="checkboxes" id="checkboxes-3" value="tops">
+					  Tops
+					</label>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes-4">
+					  <input type="checkbox" name="checkboxes" id="checkboxes-4" value="pants">
+					  Pants
+					</label>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes-5">
+					  <input type="checkbox" name="checkboxes" id="checkboxes-5" value="tshirts">
+					  T-shirts
+					</label>
+					<span class = "separator"></span>
+					<strong class="col-md-1">Sort by:</strong>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes1-4">
+					  <input type="checkbox" name="checkboxes1" id="checkboxes1-1" value="price" id="price">
+					  Price
+					</label>
+					<label class="col-md-1 roboto checkbox-inline" for="checkboxes1-5">
+					  <input type="checkbox" name="checkboxes1" id="checkboxes1-2" value="score" id="score">
+					  Score
+					</label>
+				</div>
+			</div>
+	    </div>
+	    <div id="products" class="row list-group">
+	        <div class="item  col-xs-4 col-lg-4 hidden">
+	            <div class="thumbnail">
+	                <img class="group list-group-image" src="http://placehold.it/400x250/000/fff" alt="" />
+	                <div class="caption">
+	                    <h4 class="group inner list-group-item-heading">
+	                        Product title</h4>
+	                    <p class="group inner list-group-item-text">
+	                        Product description... Lorem ipsum dolor sit amet, consectetuer adipiscing elit,
+	                        sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat.</p>
+	                    <div class="row">
+	                        <div class="col-xs-12 col-md-6">
+	                            <p class="lead">
+	                                $21.000</p>
+	                        </div>
+	                        <div class="col-xs-12 col-md-6">
+	                            <a class="btn btn-success" href="http://www.jquery2dotnet.com">Add to cart</a>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	    <div id="inifiniteLoader" class="text-center"><img src="img/loading.gif" /></div>
+	</div>
+	<script>
+		function loadProduct(page_no,cat="all"){
+			var path = "https://test-prod-api.herokuapp.com/products";
+			var fresh = false;
+			// console.log($('input[name="checkboxes"]:checked')[0].value);
+			cat = $('input[name="checkboxes"]:checked')[0].value;
+			sort_by = "";
+			if ($('input[name="checkboxes1"]:checked')[0] !== undefined) {
+				sort_by = $('input[name="checkboxes1"]:checked')[0].value;
+			};
+			if (cat != "all") {
+				path = "https://test-prod-api.herokuapp.com/products?cat="+cat;
+			}else{
+				path = "https://test-prod-api.herokuapp.com/products"
+			};
+			if (page_no==1) {
+				fresh = true;
+			}else{
+				fresh = false;
+			};
+			$.ajax({
+				url: path,
+				method: "get",
+				success: function(data){
+					$("#products").css({"opacity":"1"});
+					if (fresh) {
+						$("#products").html("");
+						count = 2;
+					};
+					if (sort_by !== "" && ( (sort_by == "price") || (sort_by == "score") ) ) {
+						data["products"] = data["products"].sort(function(a, b) {
+							if (sort_by=="price") return (a[sort_by] > b[sort_by]);
+							if (sort_by=="score") return (a[sort_by] < b[sort_by]);
+					    });
+					    console.log(data["products"]);
+						price = false;
+						score = false;
+					};
+					end = (page_no*9)-1;
+					start = end - 8;
+					for (var i = start; i <= end; i++) {
+						var product = data["products"][i];
+						$("#products").append("<div class='item  col-xs-4 col-lg-4'><div class='type'>" + product["cat"] + "</div><div class='thumbnail' title = 'score: "+ product["score"] +"'><img class='group list-group-image' src='" + product["img"] + "' alt='' /><div class='caption'><div class='row'><div class='col-xs-12 col-md-8 paddingReset'><div class='group inner list-group-item-heading text-muted product-name text-capitalize roboto'>" + product["name"] + "</div></div><div class='col-xs-12 col-md-4 price paddingReset'><p class='text-center'> <i class='fa fa-inr'></i>" + product["price"] + "</p></div></div></div></div></div>");
+					};
+				}
+			});
+			return false;
+		}
+	</script>
+	<script type="text/javascript">
+		var count = 2;
+		var price = false;
+		var score = false;
+		// $('.checkboxGroup input').not("#checkboxes-0").prop('checked', false);  
+        $(window).scroll(function(){
+            if  ($(window).scrollTop() == $(document).height() - $(window).height()){
+                loadProduct(count);
+                count++;
+            }
+        });
+        $('.checkboxGroup input[name="checkboxes"]').on('change', function() {
+		    $('.checkboxGroup input[name="checkboxes"]').not(this).prop('checked', false);  
+		    count = 1;
+		    $("#products").css({"opacity":"0.5"});
+		    loadProduct(count);
+		});
+
+		$('.checkboxGroup input[name="checkboxes1"]').on('change', function() {
+		    $('.checkboxGroup input[name="checkboxes1"]').not(this).prop('checked', false);  
+		    count = 1;
+		    // $("#products").css({"opacity":"0.5"});
+		    var id = $(this).attr('id');
+	        var asc = true; // switch the order, true if not set
+	        
+	        if (asc) $(this).attr('checked', 'checked');
+	        if (id == "price") {
+	        	price = true;
+	        }else{
+	        	score = true;
+	        };
+	        $("#products").css({"opacity":"0.5"});
+		    loadProduct(count);
+		});
+	</script>
+
+	<script type="text/javascript">
+
+$(function() {
+    $('#price,#score').on("change",function() {
+    	count = 1;
+        var id = $(this).attr('id');
+        var asc = true; // switch the order, true if not set
+        
+        if (asc) $(this).attr('checked', 'checked');
+        if (id == "price") {
+        	price = true;
+        }else{
+        	score = true;
+        };
+        loadProduct(count);
+        
+        // sortResults(id, asc);
+    });
+        
+    // showResults();
+});
+
+function sortResults(prop, asc) {
+    arr = arr.sort(function(a, b) {
+        if (asc) return (a[prop] > b[prop]);
+        else return (b[prop] > a[prop]);
+    });
+    showResults();
+}
+
+function showResults () {
+    var html = '';
+    for (var e in arr) {
+        html += '<tr>'
+            +'<td>'+arr[e].f_name+'</td>'
+            +'<td>'+arr[e].l_name+'</td>'
+            +'<td>'+arr[e].age+'</td>'
+        +'</tr>';
+    }
+    $('#results').html(html);
+}
+
+	</script>
+</body>
+</html>
